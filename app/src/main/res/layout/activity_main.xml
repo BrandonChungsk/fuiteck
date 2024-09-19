@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:padding="16dp">
+
+    <!-- Header Text -->
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Dates"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#4CAF50"
+        android:layout_gravity="center"
+        android:padding="16dp" />
+
+    <!-- Select Date From Label and EditText with Style -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/rounded_border"
+        android:padding="8dp"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Date From:"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_dateFrom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="dd/MM/yyyy"
+            android:background="@drawable/rounded_input"
+            android:padding="10dp"
+            android:layout_marginStart="10dp"
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <!-- Select Date To Label and EditText with Style -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/rounded_border"
+        android:padding="8dp"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Date To:"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_dateTo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="dd/MM/yyyy"
+            android:background="@drawable/rounded_input"
+            android:padding="10dp"
+            android:layout_marginStart="10dp"
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <!-- Cancel and Next Buttons with Style -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="32dp">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:backgroundTint="#E57373"
+            android:textColor="#FFF"
+            android:layout_marginEnd="8dp"
+            android:padding="12dp" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFF"
+            android:layout_marginStart="8dp"
+            android:padding="12dp" />
+    </LinearLayout>
+
+</LinearLayout>
