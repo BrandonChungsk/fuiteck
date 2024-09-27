@@ -1,34 +1,31 @@
-<!-- File: res/layout/activity_main.xml -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Start Date EditText -->
     <EditText
         android:id="@+id/startDateEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Start Date"
-        android:focusable="false"
-        android:clickable="true"/>
+        android:hint="Select Start Date" />
 
-    <!-- End Date EditText -->
     <EditText
         android:id="@+id/endDateEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="End Date"
-        android:focusable="false"
-        android:clickable="true"/>
+        android:hint="Select End Date" />
 
-    <!-- Next Button -->
     <Button
         android:id="@+id/nextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next"/>
+        android:text="Next" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel" />
 
 </LinearLayout>
