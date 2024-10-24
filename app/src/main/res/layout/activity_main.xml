@@ -1,31 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Start Date TextBox -->
     <EditText
-        android:id="@+id/startDateEditText"
+        android:id="@+id/startDateText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select Start Date" />
+        android:hint="Start Date"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"/>
 
+    <!-- End Date TextBox -->
     <EditText
-        android:id="@+id/endDateEditText"
+        android:id="@+id/endDateText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select End Date" />
+        android:hint="End Date"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"/>
 
+    <!-- Next Button -->
+
+    <!-- Cancel Button -->
     <Button
         android:id="@+id/nextButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next" />
 
     <Button
         android:id="@+id/cancelButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:rotationY="-2"
         android:text="Cancel" />
-
 </LinearLayout>

@@ -12,20 +12,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JavaTh"
         tools:targetApi="31">
+
+        <!-- Declaration of ThirdActivity -->
+        <activity
+            android:name=".ThirdActivity"
+            android:exported="false" />
+
         <activity
             android:name=".SecondActivity"
             android:exported="false" />
+
+        <activity android:name=".FourthActivity" />
+
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.JavaTh">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
     <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

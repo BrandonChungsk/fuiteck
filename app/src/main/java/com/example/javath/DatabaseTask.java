@@ -15,13 +15,11 @@ public class DatabaseTask extends AsyncTask<Void, Void, String> {
     private String endDate;
     private DatabaseTaskListener listener;
 
-    // Listener interface to handle data fetching and errors
     public interface DatabaseTaskListener {
         void onDataFetched(String result);
         void onError(String errorMessage);
     }
 
-    // Constructor with three parameters: startDate, endDate, and listener
     public DatabaseTask(String startDate, String endDate, DatabaseTaskListener listener) {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -38,22 +36,7 @@ public class DatabaseTask extends AsyncTask<Void, Void, String> {
             connection = DriverManager.getConnection(
                     "jdbc:jtds:sqlserver://210.187.179.69/POSTEST;user=sa;password=pdsmsde;trustServerCertificate=true;");
 
-            // public ipv4: 183.171.158.9 - x
-            // 10.0.0.232:55097 works regardless of ports
-            // 210.187.179.69 - x
-            // 210.187.179.69:9090 -> 10.0.0.232:9090
-            // currently port is 9090
-            // default SQL port: 1433
-            // fuiteckmssql2019.c900wc6ac9gb.ap-southeast-2.rds.amazonaws.com:1433 - x
-            // misc: 208.67.222.222 - x
-            // 183.171.158.14 - myip.opendns - x
-            // 10.0.0.59  - x
-            // 10.0.0.248
-            // 8585
-            // "jdbc:jtds:sqlserver://10.0.0.59:1433/POSNEW;instance=SQLEXPRESS;user=sa;password=pdsmsde;trustServerCertificate=true;"
-            // "jdbc:jtds:sqlserver://10.0.0.59:9090/POSTEST;instance=SQLEXPRESS;user=sa;password=1234;trustServerCertificate=true;");
-
-            String query = "SELECT PO_DT, PO_LOC_CD, GrandTotal FROM dbo.V_DailySales WHERE PO_DT BETWEEN ? AND ?";
+            String query = "SELECT PO_LOC_CD, GrandTotal FROM dbo.v_DailySales WHERE PO_DT BETWEEN ? AND ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, startDate);
             preparedStatement.setString(2, endDate);
@@ -64,12 +47,11 @@ public class DatabaseTask extends AsyncTask<Void, Void, String> {
             double totalSale = 0.0;
 
             while (resultSet.next()) {
-                String date = resultSet.getString("PO_DT");
                 String outletCode = resultSet.getString("PO_LOC_CD");
                 double sale = resultSet.getDouble("GrandTotal");
                 totalSale += sale;
 
-                sb.append(date).append(" | ").append(outletCode).append(" | ").append(sale).append("\n");
+                sb.append(outletCode).append(" | ").append(sale).append("\n");
             }
 
             sb.append("\nTotal Sales: ").append(totalSale);
@@ -104,3 +86,24 @@ public class DatabaseTask extends AsyncTask<Void, Void, String> {
         }
     }
 }
+
+
+
+// Notes on various IPs, ports, and connection attempts:
+// public ipv4: 183.171.158.9 - x
+// 10.0.0.232:55097 works regardless of ports
+// 210.187.179.69 - x
+// 210.187.179.69:9090 -> 10.0.0.232:9090
+// Currently port is 9090
+// Default SQL port: 1433
+// fuiteckmssql2019.c900wc6ac9gb.ap-southeast-2.rds.amazonaws.com:1433 - x
+// misc: 208.67.222.222 - x
+// 183.171.158.14 - myip.opendns - x
+// 10.0.0.59  - x
+// 10.0.0.248
+// 8585
+// "jdbc:jtds:sqlserver://10.0.0.59:1433/POSNEW;instance=SQLEXPRESS;user=sa;password=pdsmsde;trustServerCertificate=true;"
+// "jdbc:jtds:sqlserver://10.0.0.59:9090/POSTEST;instance=SQLEXPRESS;user=sa;password=1234;trustServerCertificate=true;"
+//
+//
+

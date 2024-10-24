@@ -1,137 +1,140 @@
 package com.example.javath;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class SecondActivity extends AppCompatActivity {
 
-    private TextView dateRangeTextView, totalSalesTextView;
-    private TableLayout resultsTable;
-    private SimpleDateFormat dateTimeFormat;
+    private TableLayout resultsLayout;  // Modified to TableLayout
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        dateRangeTextView = findViewById(R.id.dateRangeTextView);
-        resultsTable = findViewById(R.id.resultsTable);
-        totalSalesTextView = findViewById(R.id.totalSalesTextView);
+        resultsLayout = findViewById(R.id.resultsLayout);  // Corrected to TableLayout
 
-        dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
+        // Added start and end date TextView handling
+        TextView startDateTextView = findViewById(R.id.startDateTextView);
+        TextView endDateTextView = findViewById(R.id.endDateTextView);
 
-        String startDateInput = getIntent().getStringExtra("startDate");
-        String endDateInput = getIntent().getStringExtra("endDate");
+        String startDate = getIntent().getStringExtra("startDate");
+        String endDate = getIntent().getStringExtra("endDate");
 
-        String startDate = getStartOfDay(startDateInput);
-        String endDate = getEndOfDay(endDateInput);
+        startDateTextView.setText("Start Date: " + startDate);
+        endDateTextView.setText("End Date: " + endDate);
 
-        if (startDate != null && endDate != null) {
-            dateRangeTextView.setText("Selected Start Date: " + startDate + "\nSelected End Date: " + endDate);
-        } else {
-            dateRangeTextView.setText("Dates not available");
-        }
-
-        new DatabaseTask(startDate, endDate, new DatabaseTask.DatabaseTaskListener() {
-            @Override
-            public void onDataFetched(String result) {
-                populateTable(result);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                dateRangeTextView.setText("Error: " + errorMessage);
-            }
-        }).execute();
+        new FetchSalesTask(startDate, endDate).execute();
     }
 
-    private void populateTable(String data) {
-        // Assuming that the data is formatted as "Date|Outlet Code|Sale\n..." per row
-        String[] rows = data.split("\n");
-        double totalSales = 0.0;
+    private class FetchSalesTask extends AsyncTask<Void, Void, ArrayList<SaleData>> {
 
-        // Clear any previous data in the table
-        resultsTable.removeAllViews();
+        private String startDate, endDate;
 
-        // Add the table header only once
-        if (resultsTable.getChildCount() == 0) {
-            TableRow headerRow = new TableRow(this);
-            headerRow.addView(createTextView("Date"));
-            headerRow.addView(createTextView("Outlet Code"));
-            headerRow.addView(createTextView("Sale"));
-            resultsTable.addView(headerRow);
+        public FetchSalesTask(String startDate, String endDate) {
+            this.startDate = startDate;
+            this.endDate = endDate;
         }
 
-        // Loop through the rows and populate the table
-        for (String row : rows) {
-            String[] columns = row.split("\\|");
-            if (columns.length == 3) {
-                TableRow tableRow = new TableRow(this);
-                tableRow.addView(createTextView(columns[0].trim())); // Date
-                tableRow.addView(createTextView(columns[1].trim())); // Outlet Code
-                tableRow.addView(createTextView(columns[2].trim())); // Sale
+        @Override
+        protected ArrayList<SaleData> doInBackground(Void... voids) {
+            ArrayList<SaleData> saleDataList = new ArrayList<>();
+            Connection connection = null;
 
-                // Parse sale amount and add to total sales
-                try {
-                    totalSales += Double.parseDouble(columns[2].trim());
-                } catch (NumberFormatException e) {
-                    Log.e("SecondActivity", "Error parsing sale amount: " + e.getMessage());
+            try {
+                Class.forName("net.sourceforge.jtds.jdbc.Driver");
+                connection = DriverManager.getConnection(
+                        "jdbc:jtds:sqlserver://210.187.179.69/POSTEST;user=sa;password=pdsmsde;trustServerCertificate=true;");
+
+                String query = "SELECT PO_LOC_CD, GrandTotal FROM dbo.v_DailySales WHERE PO_DT BETWEEN ? AND ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, startDate);
+                preparedStatement.setString(2, endDate);
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                while (resultSet.next()) {
+                    String outletCode = resultSet.getString("PO_LOC_CD");
+                    double grandTotal = resultSet.getDouble("GrandTotal");
+
+                    SaleData saleData = new SaleData(outletCode, grandTotal);
+                    saleDataList.add(saleData);
                 }
 
-                resultsTable.addView(tableRow);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return saleDataList;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<SaleData> saleDataList) {
+            for (SaleData saleData : saleDataList) {
+                TableRow row = new TableRow(SecondActivity.this);
+
+                TextView outletCodeTextView = new TextView(SecondActivity.this);
+                outletCodeTextView.setText(saleData.getOutletCode());
+                outletCodeTextView.setPadding(10, 10, 10, 10);
+                outletCodeTextView.setGravity(android.view.Gravity.CENTER);
+
+                TextView grandTotalTextView = new TextView(SecondActivity.this);
+                grandTotalTextView.setText(String.valueOf(saleData.getGrandTotal()));
+                grandTotalTextView.setPadding(10, 10, 10, 10);
+                grandTotalTextView.setGravity(android.view.Gravity.CENTER);
+
+                // Click listener for outlet code
+                final String outletCode = saleData.getOutletCode();
+                outletCodeTextView.setOnClickListener(view -> {
+                    Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
+                    intent.putExtra("outletCode", outletCode);
+                    intent.putExtra("startDate", startDate);
+                    intent.putExtra("endDate", endDate);
+                    startActivity(intent);
+                });
+
+                row.addView(outletCodeTextView);
+                row.addView(grandTotalTextView);
+
+                resultsLayout.addView(row);
             }
         }
-
-        // Display the total sales
-        totalSalesTextView.setText(String.format(Locale.getDefault(), "Total Sales: %.2f", totalSales));
     }
 
+    private class SaleData {
+        private String outletCode;
+        private double grandTotal;
 
-    private TextView createTextView(String text) {
-        TextView textView = new TextView(this);
-        textView.setPadding(8, 8, 8, 8);
-        textView.setText(text);
-        return textView;
-    }
-
-    private String getStartOfDay(String date) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dateFormat.parse(date));
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            return dateTimeFormat.format(calendar.getTime());
-        } catch (Exception e) {
-            Log.e("SecondActivity", "Error parsing start date: " + e.getMessage());
-            return null;
+        public SaleData(String outletCode, double grandTotal) {
+            this.outletCode = outletCode;
+            this.grandTotal = grandTotal;
         }
-    }
 
-    private String getEndOfDay(String date) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dateFormat.parse(date));
-            calendar.set(Calendar.HOUR_OF_DAY, 23);
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 59);
-            calendar.set(Calendar.MILLISECOND, 999);
-            return dateTimeFormat.format(calendar.getTime());
-        } catch (Exception e) {
-            Log.e("SecondActivity", "Error parsing end date: " + e.getMessage());
-            return null;
+        public String getOutletCode() {
+            return outletCode;
+        }
+
+        public double getGrandTotal() {
+            return grandTotal;
         }
     }
 }

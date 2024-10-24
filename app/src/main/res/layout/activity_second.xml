@@ -5,37 +5,61 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- TextView to display the selected date range -->
+    <!-- Start and End Date Display -->
     <TextView
-        android:id="@+id/dateRangeTextView"
-        android:layout_width="match_parent"
+        android:id="@+id/startDateTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:text="Start Date: "
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
         android:paddingBottom="8dp" />
 
-    <!-- ScrollView to make the TableLayout scrollable -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
-        <TableLayout
-            android:id="@+id/resultsTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1" />
-
-    </ScrollView>
-
-    <!-- TextView to display the total sales at the bottom -->
     <TextView
-        android:id="@+id/totalSalesTextView"
+        android:id="@+id/endDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Date: "
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
+
+    <!-- HorizontalScrollView for table to allow horizontal scrolling -->
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingTop="16dp"
-        android:gravity="end" />
+        android:fillViewport="true">
+
+        <!-- ScrollView inside HorizontalScrollView to enable both directions -->
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TableLayout
+                android:id="@+id/resultsLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"
+                android:layout_marginTop="16dp">
+
+                <TableRow>
+                    <TextView
+                        android:text="Outlet Code"
+                        android:textSize="20sp"
+                        android:layout_gravity="center"
+                        android:padding="8dp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:text="Sales"
+                        android:textSize="20sp"
+                        android:layout_gravity="center"
+                        android:padding="8dp"
+                        android:gravity="center" />
+                </TableRow>
+            </TableLayout>
+
+        </ScrollView>
+    </HorizontalScrollView>
 
 </LinearLayout>

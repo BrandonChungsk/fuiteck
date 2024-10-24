@@ -3,68 +3,61 @@ package com.example.javath;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText startDateEditText, endDateEditText;
-    private String selectedStartDate, selectedEndDate;
-    private Calendar calendar;
+    private EditText startDateText, endDateText;
+    private Button nextButton, cancelButton;
+    private final Calendar calendar = Calendar.getInstance();
+    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startDateEditText = findViewById(R.id.startDateEditText);
-        endDateEditText = findViewById(R.id.endDateEditText);
-        Button nextButton = findViewById(R.id.nextButton);
-        Button cancelButton = findViewById(R.id.cancelButton);
+        startDateText = findViewById(R.id.startDateText);
+        endDateText = findViewById(R.id.endDateText);
+        nextButton = findViewById(R.id.nextButton);
+        cancelButton = findViewById(R.id.cancelButton);
 
-        calendar = Calendar.getInstance();
+        startDateText.setText(dateFormatter.format(calendar.getTime()));
+        endDateText.setText(dateFormatter.format(calendar.getTime()));
 
-        startDateEditText.setOnClickListener(v -> showDatePicker(startDateEditText, true));
-        endDateEditText.setOnClickListener(v -> showDatePicker(endDateEditText, false));
+        startDateText.setOnClickListener(v -> showDatePickerDialog(startDateText));
+
+        endDateText.setOnClickListener(v -> showDatePickerDialog(endDateText));
 
         nextButton.setOnClickListener(v -> {
+            String startDate = startDateText.getText().toString();
+            String endDate = endDateText.getText().toString();
+
             Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-            intent.putExtra("startDate", selectedStartDate);
-            intent.putExtra("endDate", selectedEndDate);
+            intent.putExtra("startDate", startDate);
+            intent.putExtra("endDate", endDate);
             startActivity(intent);
         });
 
         cancelButton.setOnClickListener(v -> {
-            // Reset the date fields
-            startDateEditText.setText("");
-            endDateEditText.setText("");
+            startDateText.setText("");
+            endDateText.setText("");
         });
     }
 
-    private void showDatePicker(final EditText editText, final boolean isStartDate) {
+    private void showDatePickerDialog(final EditText dateText) {
+        Calendar newCalendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
-                (view, year, month, dayOfMonth) -> {
-                    calendar.set(year, month, dayOfMonth);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String formattedDate = dateFormat.format(calendar.getTime());
-
-                    editText.setText(formattedDate);
-                    if (isStartDate) {
-                        selectedStartDate = formattedDate;
-                    } else {
-                        selectedEndDate = formattedDate;
-                    }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(year, monthOfYear, dayOfMonth);
+                    dateText.setText(dateFormatter.format(selectedDate.getTime()));
+                }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 }
