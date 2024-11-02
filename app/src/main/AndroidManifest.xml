@@ -13,6 +13,10 @@
         android:theme="@style/Theme.JavaTh"
         tools:targetApi="31">
 
+        <!-- Add this TextView at the bottom of your layout file, inside the main layout -->
+
+
+
         <!-- Declaration of ThirdActivity -->
         <activity
             android:name=".ThirdActivity"

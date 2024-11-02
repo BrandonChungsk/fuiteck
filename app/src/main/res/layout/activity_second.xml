@@ -15,6 +15,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingBottom="8dp" />
 
+
     <TextView
         android:id="@+id/endDateTextView"
         android:layout_width="wrap_content"
@@ -23,6 +24,17 @@
         android:textSize="18sp"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="16dp" />
+
+    <TextView
+        android:id="@+id/totalAmountTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Total Sales: RM 0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="end"
+        />
 
     <!-- HorizontalScrollView for table to allow horizontal scrolling -->
     <HorizontalScrollView
@@ -43,19 +55,7 @@
                 android:layout_marginTop="16dp">
 
                 <TableRow>
-                    <TextView
-                        android:text="Outlet Code"
-                        android:textSize="20sp"
-                        android:layout_gravity="center"
-                        android:padding="8dp"
-                        android:gravity="center" />
 
-                    <TextView
-                        android:text="Sales"
-                        android:textSize="20sp"
-                        android:layout_gravity="center"
-                        android:padding="8dp"
-                        android:gravity="center" />
                 </TableRow>
             </TableLayout>
 

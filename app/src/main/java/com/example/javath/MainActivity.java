@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText startDateText, endDateText;
     private Button nextButton, cancelButton;
     private final Calendar calendar = Calendar.getInstance();
+    private Calendar selectedStartDate = Calendar.getInstance(); // To track selected start date
     private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     @Override
@@ -30,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
         startDateText.setText(dateFormatter.format(calendar.getTime()));
         endDateText.setText(dateFormatter.format(calendar.getTime()));
 
-        startDateText.setOnClickListener(v -> showDatePickerDialog(startDateText));
+        startDateText.setOnClickListener(v -> showStartDatePickerDialog());
 
-        endDateText.setOnClickListener(v -> showDatePickerDialog(endDateText));
+        endDateText.setOnClickListener(v -> showEndDatePickerDialog());
 
         nextButton.setOnClickListener(v -> {
             String startDate = startDateText.getText().toString();
@@ -50,14 +51,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void showDatePickerDialog(final EditText dateText) {
-        Calendar newCalendar = Calendar.getInstance();
+    private void showStartDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
                 (view, year, monthOfYear, dayOfMonth) -> {
-                    Calendar selectedDate = Calendar.getInstance();
-                    selectedDate.set(year, monthOfYear, dayOfMonth);
-                    dateText.setText(dateFormatter.format(selectedDate.getTime()));
-                }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+                    selectedStartDate.set(year, monthOfYear, dayOfMonth);
+                    startDateText.setText(dateFormatter.format(selectedStartDate.getTime()));
+                }, selectedStartDate.get(Calendar.YEAR), selectedStartDate.get(Calendar.MONTH), selectedStartDate.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    private void showEndDatePickerDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar selectedEndDate = Calendar.getInstance();
+                    selectedEndDate.set(year, monthOfYear, dayOfMonth);
+                    endDateText.setText(dateFormatter.format(selectedEndDate.getTime()));
+                }, selectedStartDate.get(Calendar.YEAR), selectedStartDate.get(Calendar.MONTH), selectedStartDate.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 }

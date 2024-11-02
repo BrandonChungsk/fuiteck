@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -14,21 +15,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SecondActivity extends AppCompatActivity {
 
-    private TableLayout resultsLayout;  // Modified to TableLayout
+    private LinearLayout resultsLayout;
+    private TextView totalAmountTextView;
+    private TextView startDateTextView, endDateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        resultsLayout = findViewById(R.id.resultsLayout);  // Corrected to TableLayout
-
-        // Added start and end date TextView handling
-        TextView startDateTextView = findViewById(R.id.startDateTextView);
-        TextView endDateTextView = findViewById(R.id.endDateTextView);
+        resultsLayout = findViewById(R.id.resultsLayout);
+        totalAmountTextView = findViewById(R.id.totalAmountTextView);
+        startDateTextView = findViewById(R.id.startDateTextView);
+        endDateTextView = findViewById(R.id.endDateTextView);
 
         String startDate = getIntent().getStringExtra("startDate");
         String endDate = getIntent().getStringExtra("endDate");
@@ -42,6 +45,7 @@ public class SecondActivity extends AppCompatActivity {
     private class FetchSalesTask extends AsyncTask<Void, Void, ArrayList<SaleData>> {
 
         private String startDate, endDate;
+        private double totalSales;
 
         public FetchSalesTask(String startDate, String endDate) {
             this.startDate = startDate;
@@ -68,6 +72,7 @@ public class SecondActivity extends AppCompatActivity {
                 while (resultSet.next()) {
                     String outletCode = resultSet.getString("PO_LOC_CD");
                     double grandTotal = resultSet.getDouble("GrandTotal");
+                    totalSales += grandTotal;
 
                     SaleData saleData = new SaleData(outletCode, grandTotal);
                     saleDataList.add(saleData);
@@ -89,34 +94,61 @@ public class SecondActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<SaleData> saleDataList) {
+            TableLayout tableLayout = new TableLayout(SecondActivity.this);
+            tableLayout.setStretchAllColumns(true);
+
+            TableRow headerRow = new TableRow(SecondActivity.this);
+            headerRow.setPadding(30, 30, 30, 30);
+
+            TextView headerOutletCode = new TextView(SecondActivity.this);
+            headerOutletCode.setText("Outlet Code");
+            headerOutletCode.setTextSize(18);
+            headerOutletCode.setPadding(30, 30, 30, 30);
+            headerOutletCode.setGravity(android.view.Gravity.START);
+
+            TextView headerSales = new TextView(SecondActivity.this);
+            headerSales.setText("Sales");
+            headerSales.setTextSize(18);
+            headerSales.setPadding(30, 30, 90, 30);
+            headerSales.setGravity(android.view.Gravity.END);
+
+            headerRow.addView(headerOutletCode);
+            headerRow.addView(headerSales);
+            tableLayout.addView(headerRow);
+
             for (SaleData saleData : saleDataList) {
                 TableRow row = new TableRow(SecondActivity.this);
+                row.setPadding(30, 10, 30, 10);
 
-                TextView outletCodeTextView = new TextView(SecondActivity.this);
-                outletCodeTextView.setText(saleData.getOutletCode());
-                outletCodeTextView.setPadding(10, 10, 10, 10);
-                outletCodeTextView.setGravity(android.view.Gravity.CENTER);
+                TextView outletCodeView = new TextView(SecondActivity.this);
+                outletCodeView.setText(saleData.getOutletCode());
+                outletCodeView.setTextSize(16);
+                outletCodeView.setPadding(30, 10, 30, 10);
+                outletCodeView.setGravity(android.view.Gravity.START);
 
-                TextView grandTotalTextView = new TextView(SecondActivity.this);
-                grandTotalTextView.setText(String.valueOf(saleData.getGrandTotal()));
-                grandTotalTextView.setPadding(10, 10, 10, 10);
-                grandTotalTextView.setGravity(android.view.Gravity.CENTER);
+                TextView salesView = new TextView(SecondActivity.this);
+                salesView.setText(String.format(Locale.getDefault(), "%.2f", saleData.getGrandTotal()));
+                salesView.setTextSize(16);
+                salesView.setPadding(30, 10, 90, 45);
+                salesView.setGravity(android.view.Gravity.END);
 
-                // Click listener for outlet code
+                row.addView(outletCodeView);
+                row.addView(salesView);
+                tableLayout.addView(row);
+
                 final String outletCode = saleData.getOutletCode();
-                outletCodeTextView.setOnClickListener(view -> {
+
+                outletCodeView.setOnClickListener(view -> {
                     Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
                     intent.putExtra("outletCode", outletCode);
                     intent.putExtra("startDate", startDate);
                     intent.putExtra("endDate", endDate);
                     startActivity(intent);
                 });
-
-                row.addView(outletCodeTextView);
-                row.addView(grandTotalTextView);
-
-                resultsLayout.addView(row);
             }
+
+            resultsLayout.addView(tableLayout);
+            totalAmountTextView.setText("Total Sales: RM " + String.format(Locale.getDefault(), "%.2f", totalSales));
         }
     }
 

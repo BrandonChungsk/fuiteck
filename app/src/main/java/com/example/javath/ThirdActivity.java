@@ -96,23 +96,27 @@ public class ThirdActivity extends AppCompatActivity {
             tableLayout.setStretchAllColumns(true);
 
             TableRow headerRow = new TableRow(ThirdActivity.this);
-            headerRow.setPadding(5, 5, 5, 5);
+            headerRow.setPadding(10, 10, 10, 10);
 
             TextView headerReceiptNo = new TextView(ThirdActivity.this);
             headerReceiptNo.setText("Receipt No");
             headerReceiptNo.setTextSize(14);
+            headerReceiptNo.setPadding(15, 15, 15, 15);
 
             TextView headerDate = new TextView(ThirdActivity.this);
             headerDate.setText("Date");
             headerDate.setTextSize(14);
+            headerDate.setPadding(15, 15, 15, 15);
 
             TextView headerDiscount = new TextView(ThirdActivity.this);
             headerDiscount.setText("Discount");
             headerDiscount.setTextSize(14);
+            headerDiscount.setPadding(15, 15, 15, 15);
 
             TextView headerAmount = new TextView(ThirdActivity.this);
             headerAmount.setText("Amount (RM)");
             headerAmount.setTextSize(16);
+            headerAmount.setPadding(15, 15, 15, 15);
 
             headerRow.addView(headerReceiptNo);
             headerRow.addView(headerDate);
@@ -123,30 +127,35 @@ public class ThirdActivity extends AppCompatActivity {
 
             for (ReceiptData receipt : receiptDataList) {
                 TableRow row = new TableRow(ThirdActivity.this);
-                row.setPadding(5, 5, 5, 5);
+                row.setPadding(10, 10, 10, 10);
 
                 TextView receiptNoView = new TextView(ThirdActivity.this);
                 receiptNoView.setText(receipt.getReceiptNo());
                 receiptNoView.setTextSize(12);
+                receiptNoView.setPadding(15, 15, 15, 15);
 
-                // **Click Listener for ReceiptNo to open FourthActivity**
+                // Set an OnClickListener to navigate to FourthActivity on click
+                final String receiptNo = receipt.getReceiptNo();
                 receiptNoView.setOnClickListener(view -> {
                     Intent intent = new Intent(ThirdActivity.this, FourthActivity.class);
-                    intent.putExtra("receiptNo", receipt.getReceiptNo());
+                    intent.putExtra("receiptNo", receiptNo);
                     startActivity(intent);
                 });
 
                 TextView dateView = new TextView(ThirdActivity.this);
                 dateView.setText(receipt.getReceiptDate());
                 dateView.setTextSize(12);
+                dateView.setPadding(15, 15, 15, 15);
 
                 TextView discountView = new TextView(ThirdActivity.this);
-                discountView.setText(String.valueOf(receipt.getDiscount()));
+                discountView.setText(String.format("%.2f", receipt.getDiscount()));
                 discountView.setTextSize(12);
+                discountView.setPadding(15, 15, 15, 15);
 
                 TextView amountView = new TextView(ThirdActivity.this);
-                amountView.setText(String.valueOf(receipt.getAmount()));
+                amountView.setText(String.format("%.2f", receipt.getAmount()));
                 amountView.setTextSize(16);
+                amountView.setPadding(15, 15, 15, 15);
 
                 row.addView(receiptNoView);
                 row.addView(dateView);
@@ -158,6 +167,8 @@ public class ThirdActivity extends AppCompatActivity {
 
             receiptLayout.addView(tableLayout);
         }
+
+
 
         private String formatDate(String dateTime) {
             try {
