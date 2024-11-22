@@ -57,7 +57,7 @@ public class FourthActivity extends AppCompatActivity {
             try {
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 connection = DriverManager.getConnection(
-                        "jdbc:jtds:sqlserver://210.187.179.69/POSTEST;user=sa;password=pdsmsde;trustServerCertificate=true;"
+                        "jdbc:jtds:sqlserver://10.0.0.59/POSNEW;user=sa;password=pdsmsde;trustServerCertificate=true;"
                 );
 
                 String query = "SELECT POD_ITEM_CD, POD_DESC, POD_QTY, POD_DISCOUNT, POD_AMOUNT " +

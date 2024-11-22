@@ -5,6 +5,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+
+    <Spinner
+        android:id="@+id/locationSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:spinnerMode="dropdown" />
+
+
     <!-- Start Date TextBox -->
     <EditText
         android:id="@+id/startDateText"
@@ -32,12 +41,20 @@
         android:id="@+id/nextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/white"
         android:text="Next" />
 
     <Button
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/white"
         android:rotationY="-2"
         android:text="Cancel" />
 </LinearLayout>

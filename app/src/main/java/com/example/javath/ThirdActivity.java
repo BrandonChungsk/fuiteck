@@ -8,12 +8,12 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -32,7 +32,12 @@ public class ThirdActivity extends AppCompatActivity {
         String startDate = getIntent().getStringExtra("startDate");
         String endDate = getIntent().getStringExtra("endDate");
 
-        new FetchReceiptDetailsTask(outletCode, startDate, endDate).execute();
+        if (outletCode != null && startDate != null && endDate != null) {
+            new FetchReceiptDetailsTask(outletCode, startDate, endDate).execute();
+        } else {
+            System.out.println("Error: Missing parameters. OutletCode=" + outletCode +
+                    ", StartDate=" + startDate + ", EndDate=" + endDate);
+        }
     }
 
     private class FetchReceiptDetailsTask extends AsyncTask<Void, Void, ArrayList<ReceiptData>> {
@@ -53,31 +58,37 @@ public class ThirdActivity extends AppCompatActivity {
             try {
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 connection = DriverManager.getConnection(
-                        "jdbc:jtds:sqlserver://210.187.179.69/POSTEST;user=sa;password=pdsmsde;trustServerCertificate=true;");
+                        "jdbc:jtds:sqlserver://210.187.179.69/POSNEW;user=sa;password=pdsmsde;trustServerCertificate=true;");
 
-                String query = "SELECT ReceiptNo, ReceiptDate, Location, Discount, Amount " +
-                        "FROM dbo.V_DailySalesBill WHERE Location = ? AND ReceiptDate BETWEEN ? AND ?";
+                String query = "SELECT ReceiptNo, CONVERT(VARCHAR(10), ReceiptDate, 120) AS ReceiptDate, " +
+                        "Location, Discount, Amount FROM dbo.V_DailySalesBill WHERE Location = ? AND ReceiptDate BETWEEN ? AND ?";
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, outletCode);
                 preparedStatement.setString(2, startDate);
                 preparedStatement.setString(3, endDate);
+
+                System.out.println("Query executed: " + query);
+                System.out.println("Parameters: Location=" + outletCode + ", StartDate=" + startDate + ", EndDate=" + endDate);
 
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) {
                     String receiptNo = resultSet.getString("ReceiptNo");
                     String receiptDate = resultSet.getString("ReceiptDate");
-                    String formattedDate = formatDate(receiptDate);
                     String location = resultSet.getString("Location");
                     double discount = resultSet.getDouble("Discount");
                     double amount = resultSet.getDouble("Amount");
 
-                    ReceiptData receiptData = new ReceiptData(receiptNo, formattedDate, location, discount, amount);
-                    receiptDataList.add(receiptData);
+                    System.out.println("Fetched Receipt: " + receiptNo + ", Date: " + receiptDate + ", Amount: " + amount);
+
+                    receiptDataList.add(new ReceiptData(receiptNo, receiptDate, location, discount, amount));
                 }
 
+                resultSet.close();
+                preparedStatement.close();
             } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
+                System.out.println("Database Error: " + e.getMessage());
             } finally {
                 if (connection != null) {
                     try {
@@ -92,9 +103,15 @@ public class ThirdActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<ReceiptData> receiptDataList) {
+            if (receiptDataList.isEmpty()) {
+                System.out.println("No data found.");
+                return;
+            }
+
             TableLayout tableLayout = new TableLayout(ThirdActivity.this);
             tableLayout.setStretchAllColumns(true);
 
+            // Create and add header row
             TableRow headerRow = new TableRow(ThirdActivity.this);
             headerRow.setPadding(10, 10, 10, 10);
 
@@ -125,6 +142,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             tableLayout.addView(headerRow);
 
+            // Add data rows
             for (ReceiptData receipt : receiptDataList) {
                 TableRow row = new TableRow(ThirdActivity.this);
                 row.setPadding(10, 10, 10, 10);
@@ -134,7 +152,7 @@ public class ThirdActivity extends AppCompatActivity {
                 receiptNoView.setTextSize(12);
                 receiptNoView.setPadding(15, 15, 15, 15);
 
-                // Set an OnClickListener to navigate to FourthActivity on click
+                // Set OnClickListener to navigate to FourthActivity
                 final String receiptNo = receipt.getReceiptNo();
                 receiptNoView.setOnClickListener(view -> {
                     Intent intent = new Intent(ThirdActivity.this, FourthActivity.class);
@@ -148,12 +166,12 @@ public class ThirdActivity extends AppCompatActivity {
                 dateView.setPadding(15, 15, 15, 15);
 
                 TextView discountView = new TextView(ThirdActivity.this);
-                discountView.setText(String.format("%.2f", receipt.getDiscount()));
+                discountView.setText(String.format(Locale.getDefault(), "%.2f", receipt.getDiscount()));
                 discountView.setTextSize(12);
                 discountView.setPadding(15, 15, 15, 15);
 
                 TextView amountView = new TextView(ThirdActivity.this);
-                amountView.setText(String.format("%.2f", receipt.getAmount()));
+                amountView.setText(String.format(Locale.getDefault(), "%.2f", receipt.getAmount()));
                 amountView.setTextSize(16);
                 amountView.setPadding(15, 15, 15, 15);
 
@@ -166,19 +184,6 @@ public class ThirdActivity extends AppCompatActivity {
             }
 
             receiptLayout.addView(tableLayout);
-        }
-
-
-
-        private String formatDate(String dateTime) {
-            try {
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
-                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                return outputFormat.format(inputFormat.parse(dateTime));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return dateTime;
-            }
         }
     }
 

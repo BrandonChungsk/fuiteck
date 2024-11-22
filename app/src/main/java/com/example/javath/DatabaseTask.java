@@ -34,7 +34,7 @@ public class DatabaseTask extends AsyncTask<Void, Void, String> {
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
             connection = DriverManager.getConnection(
-                    "jdbc:jtds:sqlserver://210.187.179.69/POSTEST;user=sa;password=pdsmsde;trustServerCertificate=true;");
+                    "jdbc:jtds:sqlserver://210.187.179.69/POSNEW;user=sa;password=pdsmsde;trustServerCertificate=true;");
 
             String query = "SELECT PO_LOC_CD, GrandTotal FROM dbo.v_DailySales WHERE PO_DT BETWEEN ? AND ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);

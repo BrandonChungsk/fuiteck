@@ -1,0 +1,18 @@
+<resources>
+
+    <!-- Custom DatePicker dialog theme with dark background and white text -->
+    <style name="CustomDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:buttonBarButtonStyle">@style/CalendarButtonStyle</item> <!-- Buttons style -->
+        <item name="android:colorAccent">#000000</item> <!-- Accent color for selected date -->
+        <item name="android:textColorPrimary">#FFFFFF</item> <!-- Primary text color (year and month) -->
+        <item name="android:windowBackground">#000000</item> <!-- Black background for the dialog -->
+        <item name="android:headerBackground">#000000</item> <!-- Black header background color -->
+    </style>
+
+    <!-- Button style for the DatePickerDialog -->
+    <style name="CalendarButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:backgroundTint">#444444</item> <!-- Dark button background -->
+        <item name="android:textColor">#FFFFFF</item> <!-- White text color for buttons -->
+    </style>
+
+</resources>

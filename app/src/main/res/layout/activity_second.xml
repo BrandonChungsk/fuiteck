@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Start and End Date Display -->
+    <!-- Start Date -->
     <TextView
         android:id="@+id/startDateTextView"
         android:layout_width="wrap_content"
@@ -15,6 +15,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingBottom="8dp" />
 
+    <!-- End Date -->
 
     <TextView
         android:id="@+id/endDateTextView"
@@ -25,38 +26,79 @@
         android:layout_gravity="center_horizontal"
         android:paddingBottom="16dp" />
 
+
+    <!-- Sort By Button -->
+    <Button
+        android:id="@+id/sortButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/white"
+        android:text="Sort: Date ↑"
+        android:textSize="16sp" />
+
+    <!-- Total Sales -->
+
+    <!-- Horizontal Scroll for Table -->
+
     <TextView
         android:id="@+id/totalAmountTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="end"
         android:padding="10dp"
         android:text="Total Sales: RM 0.00"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:gravity="end"
-        />
+        android:textStyle="bold" />
 
-    <!-- HorizontalScrollView for table to allow horizontal scrolling -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true">
 
-        <!-- ScrollView inside HorizontalScrollView to enable both directions -->
+        <!-- Vertical Scroll inside Horizontal -->
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <!-- Table Layout -->
             <TableLayout
                 android:id="@+id/resultsLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:stretchColumns="1"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:paddingBottom="16dp">
 
-                <TableRow>
+                <!-- Header Row -->
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DATE"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="start"
+                        android:textStyle="bold"
+                        android:paddingEnd="16dp"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SALES"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="end"
+                        android:textStyle="bold"
+                        android:paddingStart="16dp"
+                        android:textSize="16sp" />
                 </TableRow>
+
             </TableLayout>
 
         </ScrollView>

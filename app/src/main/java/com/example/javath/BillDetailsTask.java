@@ -34,7 +34,7 @@ public class BillDetailsTask extends AsyncTask<Void, Void, List<BillData>> {
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
             connection = DriverManager.getConnection(
-                    "jdbc:jtds:sqlserver://210.187.179.69/POSTEST;user=sa;password=pdsmsde;trustServerCertificate=true;");
+                    "jdbc:jtds:sqlserver://10.0.0.59/POSNEW;user=sa;password=pdsmsde;trustServerCertificate=true;");
 
             String query = "SELECT ReceiptNo, ReceiptDate, Location, Discount, Amount FROM dbo.V_DailySalesBill WHERE Location = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
