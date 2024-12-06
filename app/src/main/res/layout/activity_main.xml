@@ -6,6 +6,14 @@
     android:padding="16dp">
 
 
+    <TextView
+        android:id="@+id/locationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location:"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
     <Spinner
         android:id="@+id/locationSpinner"
         android:layout_width="match_parent"
@@ -13,6 +21,15 @@
         android:layout_marginBottom="16dp"
         android:spinnerMode="dropdown" />
 
+
+
+    <TextView
+        android:id="@+id/fromLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="From:"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
 
     <!-- Start Date TextBox -->
     <EditText
@@ -24,6 +41,15 @@
         android:clickable="true"
         android:inputType="none"/>
 
+
+    <TextView
+        android:id="@+id/toLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To:"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
     <!-- End Date TextBox -->
     <EditText
         android:id="@+id/endDateText"

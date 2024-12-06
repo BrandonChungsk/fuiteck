@@ -32,6 +32,8 @@ public class ThirdActivity extends AppCompatActivity {
         String startDate = getIntent().getStringExtra("startDate");
         String endDate = getIntent().getStringExtra("endDate");
 
+        System.out.println("Received Parameters: OutletCode=" + outletCode + ", StartDate=" + startDate + ", EndDate=" + endDate);
+
         if (outletCode != null && startDate != null && endDate != null) {
             new FetchReceiptDetailsTask(outletCode, startDate, endDate).execute();
         } else {
@@ -60,12 +62,27 @@ public class ThirdActivity extends AppCompatActivity {
                 connection = DriverManager.getConnection(
                         "jdbc:jtds:sqlserver://210.187.179.69/POSNEW;user=sa;password=pdsmsde;trustServerCertificate=true;");
 
-                String query = "SELECT ReceiptNo, CONVERT(VARCHAR(10), ReceiptDate, 120) AS ReceiptDate, " +
-                        "Location, Discount, Amount FROM dbo.V_DailySalesBill WHERE Location = ? AND ReceiptDate BETWEEN ? AND ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setString(1, outletCode);
-                preparedStatement.setString(2, startDate);
-                preparedStatement.setString(3, endDate);
+                String query;
+                PreparedStatement preparedStatement;
+
+                if ("ALL".equalsIgnoreCase(outletCode)) {
+                    // Query without filtering by location
+                    query = "SELECT ReceiptNo, CONVERT(VARCHAR(10), ReceiptDate, 120) AS ReceiptDate, " +
+                            "Location, Discount, Amount FROM dbo.V_DailySalesBill " +
+                            "WHERE ReceiptDate BETWEEN ? AND ?";
+                    preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setString(1, startDate);
+                    preparedStatement.setString(2, endDate);
+                } else {
+                    // Query with filtering by specific location
+                    query = "SELECT ReceiptNo, CONVERT(VARCHAR(10), ReceiptDate, 120) AS ReceiptDate, " +
+                            "Location, Discount, Amount FROM dbo.V_DailySalesBill " +
+                            "WHERE Location = ? AND ReceiptDate BETWEEN ? AND ?";
+                    preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setString(1, outletCode);
+                    preparedStatement.setString(2, startDate);
+                    preparedStatement.setString(3, endDate);
+                }
 
                 System.out.println("Query executed: " + query);
                 System.out.println("Parameters: Location=" + outletCode + ", StartDate=" + startDate + ", EndDate=" + endDate);
@@ -104,7 +121,11 @@ public class ThirdActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<ReceiptData> receiptDataList) {
             if (receiptDataList.isEmpty()) {
-                System.out.println("No data found.");
+                System.out.println("No receipts found for the selected criteria.");
+                TextView noDataTextView = new TextView(ThirdActivity.this);
+                noDataTextView.setText("No receipts found for the selected criteria.");
+                noDataTextView.setPadding(15, 15, 15, 15);
+                receiptLayout.addView(noDataTextView);
                 return;
             }
 

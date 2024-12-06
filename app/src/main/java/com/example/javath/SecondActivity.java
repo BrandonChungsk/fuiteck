@@ -89,6 +89,11 @@ public class SecondActivity extends AppCompatActivity {
         headerRow.setPadding(10, 10, 10, 10);
 
         if ("ALL".equals(location)) {
+            TextView numberHeader = new TextView(SecondActivity.this);
+            numberHeader.setText("No.");
+            numberHeader.setTextSize(16);
+            numberHeader.setPadding(10, 10, 10, 10);
+
             TextView outletHeader = new TextView(SecondActivity.this);
             outletHeader.setText("Outlet Code");
             outletHeader.setTextSize(16);
@@ -105,10 +110,16 @@ public class SecondActivity extends AppCompatActivity {
             salesHeader.setPadding(10, 10, 10, 10);
             salesHeader.setGravity(Gravity.END);
 
+            headerRow.addView(numberHeader);
             headerRow.addView(outletHeader);
             headerRow.addView(dateHeader);
             headerRow.addView(salesHeader);
         } else {
+            TextView numberHeader = new TextView(SecondActivity.this);
+            numberHeader.setText("No.");
+            numberHeader.setTextSize(16);
+            numberHeader.setPadding(10, 10, 10, 10);
+
             TextView dateHeader = new TextView(SecondActivity.this);
             dateHeader.setText("Date");
             dateHeader.setTextSize(16);
@@ -120,6 +131,7 @@ public class SecondActivity extends AppCompatActivity {
             salesHeader.setPadding(10, 10, 10, 10);
             salesHeader.setGravity(Gravity.END);
 
+            headerRow.addView(numberHeader);
             headerRow.addView(dateHeader);
             headerRow.addView(salesHeader);
         }
@@ -131,6 +143,10 @@ public class SecondActivity extends AppCompatActivity {
         for (SalesData data : salesDataList) {
             TableRow row = new TableRow(SecondActivity.this);
             row.setPadding(10, 10, 10, 10);
+
+            TextView numberText = new TextView(SecondActivity.this);
+            numberText.setText(String.valueOf(count));
+            numberText.setPadding(10, 10, 10, 10);
 
             if ("ALL".equals(location)) {
                 TextView outletCodeText = new TextView(SecondActivity.this);
@@ -146,15 +162,20 @@ public class SecondActivity extends AppCompatActivity {
                 salesText.setPadding(10, 10, 10, 10);
                 salesText.setGravity(Gravity.END);
 
+                // Extract the date without prefix and pass it to ThirdActivity
+                String startDate = startDateTextView.getText().toString().replace("Start Date: ", "").trim();
+                String endDate = endDateTextView.getText().toString().replace("End Date: ", "").trim();
+
                 // Make the outlet code clickable
                 outletCodeText.setOnClickListener(v -> {
                     Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
                     intent.putExtra("outletCode", data.getOutletCode());
-                    intent.putExtra("startDate", startDateTextView.getText().toString());
-                    intent.putExtra("endDate", endDateTextView.getText().toString());
+                    intent.putExtra("startDate", startDate);
+                    intent.putExtra("endDate", endDate);
                     startActivity(intent);
                 });
 
+                row.addView(numberText);
                 row.addView(outletCodeText);
                 row.addView(dateText);
                 row.addView(salesText);
@@ -168,14 +189,20 @@ public class SecondActivity extends AppCompatActivity {
                 salesText.setPadding(10, 10, 10, 10);
                 salesText.setGravity(Gravity.END);
 
+                // Extract the date without prefix and pass it to ThirdActivity
+                String startDate = startDateTextView.getText().toString().replace("Start Date: ", "").trim();
+                String endDate = endDateTextView.getText().toString().replace("End Date: ", "").trim();
+
                 // Make the date clickable
                 dateText.setOnClickListener(v -> {
                     Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
                     intent.putExtra("outletCode", location); // Pass the selected location
-                    intent.putExtra("startDate", dateText.getText().toString());
+                    intent.putExtra("startDate", startDate);
+                    intent.putExtra("endDate", endDate);
                     startActivity(intent);
                 });
 
+                row.addView(numberText);
                 row.addView(dateText);
                 row.addView(salesText);
             }
